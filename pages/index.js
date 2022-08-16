@@ -1,24 +1,23 @@
-import Head from "next/head";
-import styles from "./index.module.css";
+import Head from "next/head"
+import { useEffect, useState } from "react"
+import styles from "./index.module.css"
 
 const promptBio = 'Keenan McDonald is a software engineer from Austin, TX. He '
 
-export async function getServerSideProps() {
-  const response = await fetch(process.env.BASE_URL + '/api/generate', {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({promptBio}),
-  })
-  const data = await response.json()
+export default function Home() {
+  const [gptBio, setGptBio] = useState('...')
 
-  return {
-    props: {gptBio: data.result},
-  }
-}
-
-export default function Home({gptBio}) {
+  useEffect(async () => {
+    const response = await fetch('/api/generate', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({promptBio}),
+    })
+    const data = await response.json()
+    setGptBio(data.result)
+  }, [promptBio])
 
   return (
     <div>
